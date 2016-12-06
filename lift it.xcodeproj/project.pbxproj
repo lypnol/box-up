@@ -272,7 +272,7 @@
 		21173D4C1DF65A9D0040B5DD /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-1";
 				DEVELOPMENT_TEAM = WE6VB2B977;
 				INFOPLIST_FILE = "lift it/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
@@ -286,7 +286,7 @@
 		21173D4D1DF65A9D0040B5DD /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-1";
 				DEVELOPMENT_TEAM = WE6VB2B977;
 				INFOPLIST_FILE = "lift it/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
@@ -316,6 +316,7 @@
 				21173D4D1DF65A9D0040B5DD /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
