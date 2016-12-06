@@ -9,81 +9,123 @@
 import SpriteKit
 import GameplayKit
 
-class GameScene: SKScene {
+class GameScene: SKScene, SKPhysicsContactDelegate {
     
-    private var label : SKLabelNode?
-    private var spinnyNode : SKShapeNode?
+    var newGame : SKLabelNode!
+    var scoreView: SKLabelNode!
+    var finalScore: SKLabelNode!
+    var score = 0
+    var scoreLabel: SKLabelNode!
+    var cube = SKSpriteNode()
+    var ground = SKSpriteNode()
+    var pointer = SKSpriteNode()
+    var started = false
+    
+    private var gameState : String = "First"
     
     override func didMove(to view: SKView) {
+        newGame = self.childNode(withName: "newGame") as! SKLabelNode!
+        scoreLabel = self.childNode(withName: "ScoreLabel") as! SKLabelNode!
+        scoreView = self.childNode(withName: "score") as! SKLabelNode!
+        finalScore = self.childNode(withName: "FinalScore") as! SKLabelNode!
+        scoreLabel.alpha = 0.0
+        finalScore.alpha = 0.0
+        scoreView.alpha = 0.0
+        newGame.alpha = 0.0
+        newGame.run(SKAction.fadeIn(withDuration: 2.0))
         
-        // Get label node from scene and store it for use later
-        self.label = self.childNode(withName: "//helloLabel") as? SKLabelNode
-        if let label = self.label {
-            label.alpha = 0.0
-            label.run(SKAction.fadeIn(withDuration: 2.0))
-        }
+        cube = self.childNode(withName: "cube") as! SKSpriteNode
+        ground = self.childNode(withName: "ground") as! SKSpriteNode
+        pointer = self.childNode(withName: "pointer") as! SKSpriteNode
+
+        let border = SKPhysicsBody(edgeLoopFrom: self.frame)
+        border.affectedByGravity = false
+        border.isDynamic = false
+        border.friction = 0.5
+        border.restitution = 0.1
         
-        // Create shape node to use during mouse interaction
-        let w = (self.size.width + self.size.height) * 0.05
-        self.spinnyNode = SKShapeNode.init(rectOf: CGSize.init(width: w, height: w), cornerRadius: w * 0.3)
+        self.physicsBody = border
+        self.physicsWorld.contactDelegate = self
+    }
         
-        if let spinnyNode = self.spinnyNode {
-            spinnyNode.lineWidth = 2.5
-            
-            spinnyNode.run(SKAction.repeatForever(SKAction.rotate(byAngle: CGFloat(M_PI), duration: 1)))
-            spinnyNode.run(SKAction.sequence([SKAction.wait(forDuration: 0.5),
-                                              SKAction.fadeOut(withDuration: 0.5),
-                                              SKAction.removeFromParent()]))
+    func didBeginContact(contact: SKPhysicsContact) {
+        if gameState == "On" {
+            if !started {
+                if contact.bodyA.node?.name == "cube" && contact.bodyB.node?.name == "pointer" {
+                    started = true
+                }
+            } else {
+                if contact.bodyA.node?.name == "cube" &&
+                   (contact.bodyB.node?.name == "scene" ||
+                    contact.bodyB.node?.name == "ground") {
+                    gameOver()
+                }
+            }
         }
     }
     
-    
-    func touchDown(atPoint pos : CGPoint) {
-        if let n = self.spinnyNode?.copy() as! SKShapeNode? {
-            n.position = pos
-            n.strokeColor = SKColor.green
-            self.addChild(n)
+    func startGame() {
+        if gameState != "On" {
+            started = false
+            gameState = "On"
+            scoreLabel.alpha = 1.0
+            scoreView.alpha = 1.0
+            newGame.alpha = 0.0
+            finalScore.alpha = 0.0
+            cube.run(SKAction.moveTo(x: 0, duration: 0.1))
+            score = 0
+            scoreView.text = String(score)
+            pointer.run(SKAction.move(to: CGPoint(x: -5000, y: -5000), duration: 0))
         }
     }
     
-    func touchMoved(toPoint pos : CGPoint) {
-        if let n = self.spinnyNode?.copy() as! SKShapeNode? {
-            n.position = pos
-            n.strokeColor = SKColor.blue
-            self.addChild(n)
+    func gameOver() {
+        if gameState == "On" && started {
+            pointer.run(SKAction.move(to: CGPoint(x: -5000, y: -5000), duration: 0))
+            started = false
+            gameState = "Over"
+            scoreLabel.alpha = 0.0
+            scoreView.alpha = 0.0
+            finalScore.text = "Score: " + String(score)
+            newGame.text = "Retry"
+            finalScore.alpha = 1.0
+            newGame.alpha = 1.0
         }
     }
     
-    func touchUp(atPoint pos : CGPoint) {
-        if let n = self.spinnyNode?.copy() as! SKShapeNode? {
-            n.position = pos
-            n.strokeColor = SKColor.red
-            self.addChild(n)
+    override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
+        if gameState == "On" {
+            if let first = touches.first {
+                let location = first.location(in: self)
+                pointer.run(SKAction.move(to: location, duration: 0))
+            }
         }
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        if let label = self.label {
-            label.run(SKAction.init(named: "Pulse")!, withKey: "fadeInOut")
+        if gameState != "On" {
+            newGame.run(SKAction.scale(to: 0.5, duration: 0.5))
+        } else {
+            if let first = touches.first {
+                let location = first.location(in: self)
+                pointer.run(SKAction.move(to: location, duration: 0))
+            }
         }
-        
-        for t in touches { self.touchDown(atPoint: t.location(in: self)) }
-    }
-    
-    override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
-        for t in touches { self.touchMoved(toPoint: t.location(in: self)) }
     }
     
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-        for t in touches { self.touchUp(atPoint: t.location(in: self)) }
+        if gameState != "On" {
+            newGame.run(SKAction.scale(to: 1, duration: 0.5))
+            startGame()
+        } else {
+            pointer.run(SKAction.move(to: CGPoint(x: -5000, y: -5000), duration: 0))
+        }
     }
-    
-    override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
-        for t in touches { self.touchUp(atPoint: t.location(in: self)) }
-    }
-    
     
     override func update(_ currentTime: TimeInterval) {
-        // Called before each frame is rendered
+        if gameState == "On" {
+            score += 1
+            scoreView.text = String(score)
+        }
     }
 }
