@@ -18,7 +18,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		21173D331DF65A9D0040B5DD /* lift it.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "lift it.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		21173D331DF65A9D0040B5DD /* box up.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "box up.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		21173D361DF65A9D0040B5DD /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		21173D381DF65A9D0040B5DD /* GameScene.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = GameScene.sks; sourceTree = "<group>"; };
 		21173D3A1DF65A9D0040B5DD /* Actions.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = Actions.sks; sourceTree = "<group>"; };
@@ -44,7 +44,7 @@
 		21173D2A1DF65A9D0040B5DD = {
 			isa = PBXGroup;
 			children = (
-				21173D351DF65A9D0040B5DD /* lift it */,
+				21173D351DF65A9D0040B5DD /* box up */,
 				21173D341DF65A9D0040B5DD /* Products */,
 			);
 			sourceTree = "<group>";
@@ -52,12 +52,12 @@
 		21173D341DF65A9D0040B5DD /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				21173D331DF65A9D0040B5DD /* lift it.app */,
+				21173D331DF65A9D0040B5DD /* box up.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		21173D351DF65A9D0040B5DD /* lift it */ = {
+		21173D351DF65A9D0040B5DD /* box up */ = {
 			isa = PBXGroup;
 			children = (
 				21173D361DF65A9D0040B5DD /* AppDelegate.swift */,
@@ -70,15 +70,16 @@
 				21173D451DF65A9D0040B5DD /* LaunchScreen.storyboard */,
 				21173D481DF65A9D0040B5DD /* Info.plist */,
 			);
+			name = "box up";
 			path = "lift it";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		21173D321DF65A9D0040B5DD /* lift it */ = {
+		21173D321DF65A9D0040B5DD /* box up */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 21173D4B1DF65A9D0040B5DD /* Build configuration list for PBXNativeTarget "lift it" */;
+			buildConfigurationList = 21173D4B1DF65A9D0040B5DD /* Build configuration list for PBXNativeTarget "box up" */;
 			buildPhases = (
 				21173D2F1DF65A9D0040B5DD /* Sources */,
 				21173D301DF65A9D0040B5DD /* Frameworks */,
@@ -88,9 +89,9 @@
 			);
 			dependencies = (
 			);
-			name = "lift it";
+			name = "box up";
 			productName = "lift it";
-			productReference = 21173D331DF65A9D0040B5DD /* lift it.app */;
+			productReference = 21173D331DF65A9D0040B5DD /* box up.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -110,7 +111,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 21173D2E1DF65A9D0040B5DD /* Build configuration list for PBXProject "lift it" */;
+			buildConfigurationList = 21173D2E1DF65A9D0040B5DD /* Build configuration list for PBXProject "box up" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -123,7 +124,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				21173D321DF65A9D0040B5DD /* lift it */,
+				21173D321DF65A9D0040B5DD /* box up */,
 			);
 		};
 /* End PBXProject section */
@@ -277,7 +278,7 @@
 				INFOPLIST_FILE = "lift it/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "game.ayoubsbai.lift-it";
+				PRODUCT_BUNDLE_IDENTIFIER = "game.ayoubsbai.box-up";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = 1;
@@ -292,7 +293,7 @@
 				INFOPLIST_FILE = "lift it/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "game.ayoubsbai.lift-it";
+				PRODUCT_BUNDLE_IDENTIFIER = "game.ayoubsbai.box-up";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = 1;
@@ -302,7 +303,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		21173D2E1DF65A9D0040B5DD /* Build configuration list for PBXProject "lift it" */ = {
+		21173D2E1DF65A9D0040B5DD /* Build configuration list for PBXProject "box up" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				21173D491DF65A9D0040B5DD /* Debug */,
@@ -311,7 +312,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		21173D4B1DF65A9D0040B5DD /* Build configuration list for PBXNativeTarget "lift it" */ = {
+		21173D4B1DF65A9D0040B5DD /* Build configuration list for PBXNativeTarget "box up" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				21173D4C1DF65A9D0040B5DD /* Debug */,
