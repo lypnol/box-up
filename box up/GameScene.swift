@@ -196,9 +196,15 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             let location = first.location(in: self)
             if gameState == "On" {
                 if started {
-                    pointer.run(SKAction.move(to: location, duration: 0))
+                    if !(pointer.position.x == 5000 && pointer.position.y == 5000) {
+                        pointer.run(SKAction.move(to: location, duration: 0))
+                    }
                 } else {
-                    if location.y <= ground.frame.maxY {
+                    if !(pointer.position.x == 5000 && pointer.position.y == 5000) &&
+                    (location.y + pointer.frame.height / 2 < ground.frame.maxY - 2 ||
+                    (location.y + pointer.frame.height / 2 < cube.frame.maxY &&
+                     location.x - pointer.frame.width / 2 < cube.frame.maxX &&
+                     location.x + pointer.frame.width / 2 > cube.frame.minX)) {
                         pointer.run(SKAction.move(to: location, duration: 0))
                     }
                 }
@@ -217,10 +223,14 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 }
             } else {
                 if started {
-                    pointer.run(SKAction.move(to: location, duration: 0))
+                    if !(location.y - pointer.frame.height / 2 < cube.frame.maxY &&
+                        location.y + pointer.frame.height / 2 > cube.frame.minY &&
+                        location.x - pointer.frame.width / 2 < cube.frame.maxX &&
+                        location.x + pointer.frame.width / 2 > cube.frame.minX) {
+                        pointer.run(SKAction.move(to: location, duration: 0))
+                    }
                 } else {
-                    if location.y <= ground.frame.maxY || (location.y > ground.frame.maxY &&
-                        location.y < cube.frame.maxY && location.x < cube.frame.maxX - 60 && location.x > cube.frame.minX + 60) {
+                    if location.y + pointer.frame.height / 2 < ground.frame.maxY - 2 {
                         pointer.run(SKAction.move(to: location, duration: 0))
                     }
                 }
