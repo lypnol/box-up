@@ -1,6 +1,6 @@
 //
 //  AppDelegate.swift
-//  lift it
+//  box up
 //
 //  Created by Ayoub Sbai on 05/12/2016.
 //  Copyright © 2016 Ayoub Sbai. All rights reserved.
