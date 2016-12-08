@@ -136,16 +136,18 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             bestScoreLabel.isHidden = true
             startDate = Int(NSDate().timeIntervalSince1970)
             randomizeColors()
-            cube.run(SKAction.rotate(toAngle: 0, duration: 0.1), completion: {() -> Void in
-                self.cube.run(SKAction.move(to: CGPoint(x: 0, y: -159), duration: 0.1), completion: {() -> Void in
-                    self.cube.run(SKAction.stop())
-                    self.cube.physicsBody?.velocity.dx = 0
-                    self.cube.physicsBody?.velocity.dy = 0
-                    self.cube.physicsBody?.angularVelocity = 0
-                    self.score = 0
-                    self.scoreView.text = String(self.score)
-                    self.gameState = "On"
+            self.cube.run(SKAction.move(to: CGPoint(x: 0, y: 0), duration: 0.1), completion: {() -> Void in
+                self.cube.run(SKAction.rotate(toAngle: 0, duration: 0.1), completion: {() -> Void in
+                    self.cube.run(SKAction.move(to: CGPoint(x: 0, y: -159), duration: 0.1), completion: {() -> Void in
+                        self.cube.run(SKAction.stop())
+                        self.cube.physicsBody?.velocity.dx = 0
+                        self.cube.physicsBody?.velocity.dy = 0
+                        self.cube.physicsBody?.angularVelocity = 0
+                        self.score = 0
+                        self.scoreView.text = String(self.score)
+                        self.gameState = "On"
 
+                    })
                 })
             })
         }
