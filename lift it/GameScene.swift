@@ -27,6 +27,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var pushedStart = false
     var startDate = 0
     var initialTutorialLabelY = CGFloat(0.0)
+    
+    var BACKGROUNDB = CGFloat(0.98)
+    var CUBEB = CGFloat(0.05)
+    var GROUNDB = CGFloat(0.20)
         
     private var gameState : String = "First"
     
@@ -46,6 +50,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         cube = self.childNode(withName: "cube") as! SKSpriteNode
         ground = self.childNode(withName: "ground") as! SKSpriteNode
         pointer = self.childNode(withName: "pointer") as! SKSpriteNode
+        
+        grayScale()
         
         cube.physicsBody?.usesPreciseCollisionDetection = true
         ground.physicsBody?.usesPreciseCollisionDetection = true
@@ -73,16 +79,47 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
         
     public func didBegin(_ contact: SKPhysicsContact) {
-        if gameState == "On" {
-            let nodeA = contact.bodyA.node!.name
-            let nodeB = contact.bodyB.node!.name
-            if started {
-                if (nodeA == "cube" && (nodeB == "ground" || nodeB == "wall")) ||
-                   (nodeB == "cube" && (nodeA == "ground" || nodeA == "wall")) {
-                    gameOver()
-                }
+        let nodeA = contact.bodyA.node!.name
+        let nodeB = contact.bodyB.node!.name
+        if (nodeA == "cube" && (nodeB == "ground" || nodeB == "wall")) ||
+            (nodeB == "cube" && (nodeA == "ground" || nodeA == "wall")) {
+            if gameState == "On" && started {
+                gameOver()
             }
         }
+    }
+    
+    func randomizeColors() {
+        let cyan = CGFloat(Double(arc4random_uniform(100)) / 100.0)
+        let yellow = CGFloat(Double(arc4random_uniform(100)) / 100.0)
+        let magenta = CGFloat(Double(arc4random_uniform(100)) / 100.0)
+        let one = CGFloat(1.0)
+        
+        self.scene?.backgroundColor = UIColor(cgColor: CGColor(colorSpace: CGColorSpaceCreateDeviceCMYK(),
+                                            components: [cyan, magenta, yellow, BACKGROUNDB, one])!)
+        cube.color = UIColor(cgColor: CGColor(colorSpace: CGColorSpaceCreateDeviceCMYK(),
+                                            components: [cyan, magenta, yellow, CUBEB, one])!)
+        ground.color = UIColor(cgColor: CGColor(colorSpace: CGColorSpaceCreateDeviceCMYK(),
+                                            components: [cyan, magenta, yellow, GROUNDB, one])!)
+    }
+    
+    func grayScale() {
+        let one = CGFloat(1.0)
+        let zero = CGFloat(0.0)
+        
+        self.scene?.backgroundColor = UIColor(cgColor: CGColor(colorSpace: CGColorSpaceCreateDeviceCMYK(),
+                                              components: [zero, zero, zero, BACKGROUNDB, one])!)
+        cube.color = UIColor(cgColor: CGColor(colorSpace: CGColorSpaceCreateDeviceCMYK(),
+                                              components: [zero, zero, zero, CUBEB, one])!)
+        ground.color = UIColor(cgColor: CGColor(colorSpace: CGColorSpaceCreateDeviceCMYK(),
+                                              components: [zero, zero, zero, GROUNDB, one])!)
+    }
+    
+    func actualStart() {
+        tutorialLabel.isHidden = true
+        tutorialLabel.removeAllActions()
+        startDate = Int(NSDate().timeIntervalSince1970)
+        started = true
     }
     
     func startGame() {
@@ -96,10 +133,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             scoreLabel.isHidden = false
             scoreView.isHidden = false
             newGame.isHidden = true
-            ground.physicsBody?.restitution = 0
-            ground.physicsBody?.friction = 1
             bestScoreLabel.isHidden = true
             startDate = Int(NSDate().timeIntervalSince1970)
+            randomizeColors()
             cube.run(SKAction.rotate(toAngle: 0, duration: 0.1), completion: {() -> Void in
                 self.cube.run(SKAction.move(to: CGPoint(x: 0, y: -159), duration: 0.1), completion: {() -> Void in
                     self.cube.run(SKAction.stop())
@@ -117,6 +153,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     func gameOver() {
         if gameState == "On" && started {
+            grayScale()
             pointer.run(SKAction.move(to: CGPoint(x: 5000, y: 5000), duration: 0))
             started = false
             gameState = "Over"
@@ -143,7 +180,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 if started {
                     pointer.run(SKAction.move(to: location, duration: 0))
                 } else {
-                    if pointer.frame.maxY - 4 < ground.frame.maxY {
+                    if location.y <= ground.frame.maxY {
                         pointer.run(SKAction.move(to: location, duration: 0))
                     }
                 }
@@ -164,7 +201,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 if started {
                     pointer.run(SKAction.move(to: location, duration: 0))
                 } else {
-                    if location.y < ground.frame.maxY {
+                    if location.y <= ground.frame.maxY || (location.y > ground.frame.maxY &&
+                        location.y < cube.frame.maxY && location.x < cube.frame.maxX - 60 && location.x > cube.frame.minX + 60) {
                         pointer.run(SKAction.move(to: location, duration: 0))
                     }
                 }
@@ -200,13 +238,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 cube.physicsBody?.applyAngularImpulse(CGFloat(5))
             }
         } else if gameState == "On" && !started {
-            if cube.frame.minY > 5 + ground.frame.maxY {
-                tutorialLabel.isHidden = true
-                tutorialLabel.removeAllActions()
-                startDate = Int(NSDate().timeIntervalSince1970)
-                ground.physicsBody?.restitution = 0
-                ground.physicsBody?.friction = 1
-                started = true
+            if cube.frame.minY > 5 + ground.frame.maxY &&
+               cube.frame.minX > 20 + self.frame.minX &&
+               cube.frame.maxX < self.frame.maxX - 20 {
+                actualStart()
             }
         }
     }
