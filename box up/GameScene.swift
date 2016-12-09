@@ -48,21 +48,45 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         newGame.run(SKAction.fadeIn(withDuration: 2.0))
         
         cube = self.childNode(withName: "cube") as! SKSpriteNode
-        ground = self.childNode(withName: "ground") as! SKSpriteNode
         pointer = self.childNode(withName: "pointer") as! SKSpriteNode
         
         grayScale()
         
         cube.physicsBody?.usesPreciseCollisionDetection = true
-        ground.physicsBody?.usesPreciseCollisionDetection = true
         pointer.physicsBody?.usesPreciseCollisionDetection = true
 
         let border = SKPhysicsBody(edgeLoopFrom: self.frame)
         border.affectedByGravity = false
         border.isDynamic = false
-        border.friction = 0.5
+        border.friction = 0.1
         border.restitution = 0.5
+        border.categoryBitMask = 1
+        border.collisionBitMask = 1
+        border.contactTestBitMask = 1
         
+        ground = SKSpriteNode(color: UIColor(cgColor: CGColor(colorSpace: CGColorSpaceCreateDeviceCMYK(),
+                                                              components: [CGFloat(0.0), CGFloat(0.0), CGFloat(0.0), GROUNDB, CGFloat(1.0)])!),
+                              size: CGSize(width: (self.scene?.frame.width)!,
+                                           height: (self.scene?.frame.height)! * 0.20))
+        ground.anchorPoint = CGPoint(x: CGFloat(0.5), y: CGFloat(0.5))
+        ground.name = "ground"
+        self.addChild(ground)
+        ground.physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: ground.size.width, height: ground.size.height))
+        ground.physicsBody?.affectedByGravity = false
+        ground.physicsBody?.isDynamic = false
+        ground.physicsBody?.allowsRotation = false
+        ground.physicsBody?.categoryBitMask = 1
+        ground.physicsBody?.collisionBitMask = 1
+        ground.physicsBody?.contactTestBitMask = 1
+        ground.physicsBody?.restitution = 0.5
+        ground.physicsBody?.friction = 0.1
+        ground.physicsBody?.usesPreciseCollisionDetection = true
+        
+        ground.position.x = 0
+        ground.position.y = (self.scene?.frame.minY)! + ground.size.height / 2
+        
+        cube.position.x = 0
+        cube.position.y = ground.frame.maxY + cube.frame.height / 2
         let defaults = UserDefaults.standard
         
         bestScoreLabel.isHidden = true
@@ -81,8 +105,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     public func didBegin(_ contact: SKPhysicsContact) {
         let nodeA = contact.bodyA.node!.name
         let nodeB = contact.bodyB.node!.name
-        if (nodeA == "cube" && (nodeB == "ground" || nodeB == "wall")) ||
-            (nodeB == "cube" && (nodeA == "ground" || nodeA == "wall")) {
+        if (nodeA == "cube" && (nodeB == "ground" || nodeB == "scene")) ||
+            (nodeB == "cube" && (nodeA == "ground" || nodeA == "scene")) {
             if gameState == "On" && started {
                 gameOver()
             }
