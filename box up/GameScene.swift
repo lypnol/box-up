@@ -30,47 +30,70 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     var BACKGROUNDB = CGFloat(0.98)
     var CUBEB = CGFloat(0.05)
-    var GROUNDB = CGFloat(0.20)
+    var GROUNDB = CGFloat(0.30)
+    
+    var GROUND_HEIGHT = CGFloat(0.25) // % of screen
         
     private var gameState : String = "First"
     
     override func didMove(to view: SKView) {
+        
+        self.physicsWorld.contactDelegate = self
+        self.scaleMode = SKSceneScaleMode.aspectFit
+        
+        // Get Nodes from scene
+        
         newGame = self.childNode(withName: "newGame") as! SKLabelNode!
         scoreLabel = self.childNode(withName: "ScoreLabel") as! SKLabelNode!
         scoreView = self.childNode(withName: "score") as! SKLabelNode!
         tutorialLabel = self.childNode(withName: "tutorialLabel") as! SKLabelNode!
         finalScore = self.childNode(withName: "FinalScore") as! SKLabelNode!
         bestScoreLabel = self.childNode(withName: "BestScore") as! SKLabelNode!
+        
+        cube = self.childNode(withName: "cube") as! SKSpriteNode
+        pointer = self.childNode(withName: "pointer") as! SKSpriteNode
+
+        // Set up labels
+        
         scoreLabel.isHidden = true
         finalScore.isHidden = true
         scoreView.isHidden = true
         finalScore.isHidden = true
-        newGame.run(SKAction.fadeIn(withDuration: 2.0))
         
-        cube = self.childNode(withName: "cube") as! SKSpriteNode
-        pointer = self.childNode(withName: "pointer") as! SKSpriteNode
+        initialTutorialLabelY = tutorialLabel.position.y
         
-        grayScale()
+        // Get high score
         
-        cube.physicsBody?.usesPreciseCollisionDetection = true
-        pointer.physicsBody?.usesPreciseCollisionDetection = true
+        let defaults = UserDefaults.standard
+        bestScoreLabel.isHidden = true
+        self.bestScore = defaults.integer(forKey: "best_score")
+        if self.bestScore > 0 {
+            bestScoreLabel.isHidden = false
+            bestScoreLabel.text = "High Score: "+String(self.bestScore)
+        }
+        
+        // Set up scene borders
+        
+        self.physicsBody = SKPhysicsBody(edgeLoopFrom: self.frame)
+        self.physicsBody?.affectedByGravity = false
+        self.physicsBody?.isDynamic = false
+        self.physicsBody?.friction = 0.1
+        self.physicsBody?.restitution = 0.5
+        self.physicsBody?.categoryBitMask = 1
+        self.physicsBody?.collisionBitMask = 1
+        self.physicsBody?.contactTestBitMask = 1
 
-        let border = SKPhysicsBody(edgeLoopFrom: self.frame)
-        border.affectedByGravity = false
-        border.isDynamic = false
-        border.friction = 0.1
-        border.restitution = 0.5
-        border.categoryBitMask = 1
-        border.collisionBitMask = 1
-        border.contactTestBitMask = 1
+        // Set up ground
         
         ground = SKSpriteNode(color: UIColor(cgColor: CGColor(colorSpace: CGColorSpaceCreateDeviceCMYK(),
                                                               components: [CGFloat(0.0), CGFloat(0.0), CGFloat(0.0), GROUNDB, CGFloat(1.0)])!),
                               size: CGSize(width: (self.scene?.frame.width)!,
-                                           height: (self.scene?.frame.height)! * 0.20))
-        ground.anchorPoint = CGPoint(x: CGFloat(0.5), y: CGFloat(0.5))
+                                           height: (self.scene?.frame.height)! * GROUND_HEIGHT))
         ground.name = "ground"
-        self.addChild(ground)
+        ground.anchorPoint = CGPoint(x: CGFloat(0.5), y: CGFloat(0.5))
+        ground.position.x = 0
+        ground.position.y = (self.scene?.frame.minY)! + ground.size.height / 2
+        
         ground.physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: ground.size.width, height: ground.size.height))
         ground.physicsBody?.affectedByGravity = false
         ground.physicsBody?.isDynamic = false
@@ -80,26 +103,24 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         ground.physicsBody?.contactTestBitMask = 1
         ground.physicsBody?.restitution = 0.5
         ground.physicsBody?.friction = 0.1
-        ground.physicsBody?.usesPreciseCollisionDetection = true
         
-        ground.position.x = 0
-        ground.position.y = (self.scene?.frame.minY)! + ground.size.height / 2
+        self.addChild(ground)
+        
+        // Additional features
+        
+        cube.physicsBody?.usesPreciseCollisionDetection = true
+        pointer.physicsBody?.usesPreciseCollisionDetection = true
+        ground.physicsBody?.usesPreciseCollisionDetection = true
+        self.physicsBody?.usesPreciseCollisionDetection = true
+        
+        // Set up cube
         
         cube.position.x = 0
         cube.position.y = ground.frame.maxY + cube.frame.height / 2
-        let defaults = UserDefaults.standard
         
-        bestScoreLabel.isHidden = true
-        self.bestScore = defaults.integer(forKey: "best_score")
-        if self.bestScore > 0 {
-            bestScoreLabel.isHidden = false
-            bestScoreLabel.text = "High Score: "+String(self.bestScore)
-        }
+        // Set up colors
         
-        self.physicsBody = border
-        self.physicsWorld.contactDelegate = self
-        
-        initialTutorialLabelY = tutorialLabel.position.y
+        grayScale()
     }
         
     public func didBegin(_ contact: SKPhysicsContact) {
