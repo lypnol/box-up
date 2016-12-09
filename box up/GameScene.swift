@@ -16,23 +16,26 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var tutorialLabel: SKLabelNode!
     var finalScore: SKLabelNode!
     var bestScoreLabel: SKLabelNode!
-    var score = 0
-    var bestScore = 0
+    
     var scoreLabel: SKLabelNode!
     var cube = SKSpriteNode()
     var ground = SKSpriteNode()
     var pointer = SKSpriteNode()
+    var arrow = SKSpriteNode()
     
     var started = false
     var pushedStart = false
     var startDate = 0
-    var initialTutorialLabelY = CGFloat(0.0)
+    var score = 0
+    var bestScore = 0
     
-    var BACKGROUNDB = CGFloat(0.98)
-    var CUBEB = CGFloat(0.05)
-    var GROUNDB = CGFloat(0.30)
+    var initialArrowY = CGFloat(0.0)
     
-    var GROUND_HEIGHT = CGFloat(0.25) // % of screen
+    var BACKGROUND_BLACK = CGFloat(0.98)
+    var CUBE_BLACK = CGFloat(0.05)
+    var GROUND_BLACK = CGFloat(0.30)
+    
+    var GROUND_HEIGHT = CGFloat(0.28) // % of screen
         
     private var gameState : String = "First"
     
@@ -50,17 +53,18 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         finalScore = self.childNode(withName: "FinalScore") as! SKLabelNode!
         bestScoreLabel = self.childNode(withName: "BestScore") as! SKLabelNode!
         
+        arrow = self.childNode(withName: "arrow-up") as! SKSpriteNode
         cube = self.childNode(withName: "cube") as! SKSpriteNode
         pointer = self.childNode(withName: "pointer") as! SKSpriteNode
-
-        // Set up labels
+        
+        // Hide stuff
         
         scoreLabel.isHidden = true
         finalScore.isHidden = true
         scoreView.isHidden = true
         finalScore.isHidden = true
-        
-        initialTutorialLabelY = tutorialLabel.position.y
+        tutorialLabel.isHidden = true
+        arrow.isHidden = true
         
         // Get high score
         
@@ -86,7 +90,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         // Set up ground
         
         ground = SKSpriteNode(color: UIColor(cgColor: CGColor(colorSpace: CGColorSpaceCreateDeviceCMYK(),
-                                                              components: [CGFloat(0.0), CGFloat(0.0), CGFloat(0.0), GROUNDB, CGFloat(1.0)])!),
+                                                              components: [CGFloat(0.0), CGFloat(0.0), CGFloat(0.0), GROUND_BLACK, CGFloat(1.0)])!),
                               size: CGSize(width: (self.scene?.frame.width)!,
                                            height: (self.scene?.frame.height)! * GROUND_HEIGHT))
         ground.name = "ground"
@@ -105,6 +109,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         ground.physicsBody?.friction = 0.1
         
         self.addChild(ground)
+        
+        arrow.position.y = ground.position.y + ground.size.height / 2 - arrow.size.height / 2 - 60
+        initialArrowY = CGFloat(arrow.position.y)
         
         // Additional features
         
@@ -141,11 +148,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         let one = CGFloat(1.0)
         
         self.scene?.backgroundColor = UIColor(cgColor: CGColor(colorSpace: CGColorSpaceCreateDeviceCMYK(),
-                                            components: [cyan, magenta, yellow, BACKGROUNDB, one])!)
+                                            components: [cyan, magenta, yellow, BACKGROUND_BLACK, one])!)
         cube.color = UIColor(cgColor: CGColor(colorSpace: CGColorSpaceCreateDeviceCMYK(),
-                                            components: [cyan, magenta, yellow, CUBEB, one])!)
+                                            components: [cyan, magenta, yellow, CUBE_BLACK, one])!)
         ground.color = UIColor(cgColor: CGColor(colorSpace: CGColorSpaceCreateDeviceCMYK(),
-                                            components: [cyan, magenta, yellow, GROUNDB, one])!)
+                                            components: [cyan, magenta, yellow, GROUND_BLACK, one])!)
     }
     
     func grayScale() {
@@ -153,16 +160,19 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         let zero = CGFloat(0.0)
         
         self.scene?.backgroundColor = UIColor(cgColor: CGColor(colorSpace: CGColorSpaceCreateDeviceCMYK(),
-                                              components: [zero, zero, zero, BACKGROUNDB, one])!)
+                                              components: [zero, zero, zero, BACKGROUND_BLACK, one])!)
         cube.color = UIColor(cgColor: CGColor(colorSpace: CGColorSpaceCreateDeviceCMYK(),
-                                              components: [zero, zero, zero, CUBEB, one])!)
+                                              components: [zero, zero, zero, CUBE_BLACK, one])!)
         ground.color = UIColor(cgColor: CGColor(colorSpace: CGColorSpaceCreateDeviceCMYK(),
-                                              components: [zero, zero, zero, GROUNDB, one])!)
+                                              components: [zero, zero, zero, GROUND_BLACK, one])!)
     }
     
     func actualStart() {
         tutorialLabel.isHidden = true
         tutorialLabel.removeAllActions()
+        arrow.isHidden = true
+        arrow.removeAllActions()
+        
         startDate = Int(NSDate().timeIntervalSince1970)
         started = true
     }
@@ -171,9 +181,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         if gameState != "On" {
             started = false
             finalScore.isHidden = true
-            tutorialLabel.position.y = initialTutorialLabelY
             tutorialLabel.isHidden = false
-            tutorialLabel.run(SKAction(named: "arrow")!)
+            tutorialLabel.run(SKAction(named: "twinkle")!)
+            arrow.isHidden = false
+            arrow.position.y = initialArrowY
+            arrow.run(SKAction(named: "arrow-up")!)
             pointer.run(SKAction.move(to: CGPoint(x: 5000, y: 5000), duration: 0))
             scoreLabel.isHidden = false
             scoreView.isHidden = false
